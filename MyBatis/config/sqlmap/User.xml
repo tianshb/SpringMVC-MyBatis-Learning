@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，作用就是对sql进行分类化管理，理解sql隔离
+注意：使用mapper代理方法开发，namespace有着特殊重要的作用
+-->
+<mapper namespace="test">
+    <!--
+    进行模糊查找时，可能返回多条记录
+    resultType指定的是单条记录所映射的java对象类型
+    -->
+    <select id="findUserById" parameterType="int" resultType="com.crow.po.User">
+        SELECT * FROM USER WHERE id = #{id}
+    </select>
+    <select id="findUserByName" parameterType="java.lang.String" resultType="com.crow.po.User">
+        SELECT * FROM USER WHERE username LIKE '%${value}%'
+    </select>
+    <insert id="insertUser" parameterType="com.crow.po.User">
+      <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+          SELECT LAST_INSERT_ID()
+      </selectKey>
+        INSERT INTO USER (username, sex, birthday, address) VALUES (#{username}, #{sex}, #{birthday}, #{address})
+    </insert>
+    <delete id="deleteUser" parameterType="java.lang.Integer">
+        DELETE FROM USER WHERE id = #{id}
+    </delete>
+    <update id="updateUser" parameterType="com.crow.po.User">
+        UPDATE USER SET username = #{username}, sex = #{sex}, birthday = #{birthday}, address = #{address} WHERE id = #{id}
+    </update>
+</mapper>

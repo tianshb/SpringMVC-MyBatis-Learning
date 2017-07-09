@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，作用就是对sql进行分类化管理，理解sql隔离
+注意：使用mapper代理方法开发，namespace有着特殊重要的作用
+-->
+<mapper namespace="com.crow.mapper.UserMapper">
+
+    <sql id="query_user_where">
+        <if test="userCustom!=null">
+            <if test="userCustom.sex!=null and userCustom.sex!=''">
+                and user.sex = #{userCustom.sex}
+            </if>
+            <if test="userCustom.username!=null and userCustom.username!=''">
+                and user.username LIKE '%${userCustom.username}%'
+            </if>
+            <if test="ids!=null">
+                <!-- 使用 foreach遍历传入ids
+                collection：指定输入 对象中集合属性
+                item：每个遍历生成对象中
+                open：开始遍历时拼接的串
+                close：结束遍历时拼接的串
+                separator：遍历的两个对象中需要拼接的串
+                 -->
+                <!-- 使用实现下边的sql拼接：
+                 AND (id=1 OR id=10 OR id=16)
+                 -->
+                <foreach collection="ids" item="user_id" open="AND (" close=")" separator="or">
+                    <!-- 每个遍历需要拼接的串 -->
+                    id=#{user_id}
+                </foreach>
+
+                <!-- 实现  “ and id IN(1,10,16)”拼接 -->
+                <!-- <foreach collection="ids" item="user_id" open="and id IN(" close=")" separator=",">
+                    每个遍历需要拼接的串
+                    #{user_id}
+                </foreach> -->
+
+            </if>
+        </if>
+    </sql>
+
+    <!-- 用户信息综合查询
+	#{userCustom.sex}:取出pojo包装对象中性别值
+	${userCustom.username}：取出pojo包装对象中用户名称
+	 -->
+    <select id="findUserList" parameterType="com.crow.po.UserQueryVo"
+            resultType="com.crow.po.UserCustom">
+        SELECT * FROM USER
+        <!--
+        where可以自动去掉条件中的第一个and
+         -->
+        <where>
+            <!-- 引用sql片段 的id，如果refid指定的id不在本mapper文件中，需要前边加namespace -->
+            <include refid="query_user_where"></include>
+            <!-- 在这里还要引用其它的sql片段  -->
+        </where>
+
+
+    </select>
+    <!-- 用户信息综合查询总数
+        parameterType：指定输入类型和findUserList一样
+        resultType：输出结果类型
+    -->
+    <select id="findUserCount" parameterType="com.crow.po.UserQueryVo" resultType="int">
+        SELECT count(*) FROM USER
+
+        <!--
+      where可以自动去掉条件中的第一个and
+       -->
+        <where>
+            <!-- 引用sql片段 的id，如果refid指定的id不在本mapper文件中，需要前边加namespace -->
+            <include refid="query_user_where"></include>
+            <!-- 在这里还要引用其它的sql片段  -->
+        </where>
+
+
+    </select>
+    <!--
+    进行模糊查找时，可能返回多条记录
+    resultType指定的是单条记录所映射的java对象类型
+    -->
+    <select id="findUserById" parameterType="int" resultType="com.crow.po.User">
+        SELECT * FROM USER WHERE id = #{id}
+    </select>
+    <select id="findUserByName" parameterType="java.lang.String" resultType="com.crow.po.User">
+        <!--SELECT * FROM USER WHERE username LIKE '%${value}%'
+    -->
+        SELECT * FROM USER WHERE username = #{value}
+    </select>
+    <select id="findUserBySex" parameterType="int" resultType="com.crow.po.User">
+        SELECT *  FROM USER WHERE sex = #{sex}
+    </select>
+    <select id="findUserByAddress" parameterType="java.lang.String" resultType="com.crow.po.User">
+        SELECT * FROM USER WHERE address = #{address}
+    </select>
+    <insert id="insertUser" parameterType="com.crow.po.User">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO USER (username, sex, birthday, address) VALUES (#{username}, #{sex}, #{birthday}, #{address})
+    </insert>
+    <delete id="deleteUser" parameterType="java.lang.Integer">
+        DELETE FROM USER WHERE id = #{id}
+    </delete>
+    <update id="updateUser" parameterType="com.crow.po.User">
+        UPDATE USER SET username = #{username}, sex = #{sex}, birthday = #{birthday}, address = #{address} WHERE id = #{id}
+    </update>
+</mapper>
