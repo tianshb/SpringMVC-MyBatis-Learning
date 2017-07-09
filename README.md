@@ -21,3 +21,14 @@
 + [SpringMVC学习笔记(4)——商品修改功能开发](https://crowhawk.github.io/2017/04/11/SpringMVC_4/)
 + [SpringMVC学习笔记(5)——参数绑定](https://crowhawk.github.io/2017/04/11/SpringMVC_5/)
 
+## 源码说明
+### 安装运行
++ 运行前请新建数据库。源代码中默认数据库名为OrderForm，用户名root，密码wyj，可在配置文件中自行更改。数据库初始化脚本位于[sql](https://github.com/CrowHawk/SpringMVC-MyBatis-Learning/tree/master/sql)中。
++ 运行前请先启动TomcatServer
+### 模块
++ [MyBatis](https://github.com/CrowHawk/SpringMVC-MyBatis-Learning/tree/master/MyBatis)：博客中MyBatis系列文章涉及源码
++ [SpringMVC](https://github.com/CrowHawk/SpringMVC-MyBatis-Learning/tree/master/SpringMVC)：博客中SpringMVC系列文章前两篇涉及源码
++ [springmvc-mybatis-start](https://github.com/CrowHawk/SpringMVC-MyBatis-Learning/tree/master/springmvc-mybatis-start)：博客中MyBatis与SpringMVC框架整合代码，覆盖系列文章中几乎所有内容
+## 联系作者
+[Personal Website：Crow Home](https://crowhawk.github.io/)
+
